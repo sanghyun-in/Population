@@ -17,6 +17,28 @@ library(leaflet)
 library(DT)
 library(viridis)
 
+############################################################################
+# The original shape file is omitted in this code as the file is too large.
+# This code will start from the ligther shape file "admin1_boundaries.rds"
+############################################################################
+# shapefile downloaded from https://data.humdata.org/dataset/cod-ab-ukr
+# shapefile_folder <- "data/ukr_admbnd_sspe_20240416_ab_shp"
+
+# Find the shapefile containing "adm1" in its name
+# adm1_shapefile_path <- list.files(shapefile_folder, pattern = "adm1.*\\.shp$", full.names = TRUE)
+
+# Check if the files are found
+#if (length(adm1_shapefile_path) == 0) {
+#  stop("No shapefile with 'adm1' in its name was found.")
+#}
+
+# Load the shapefiles
+#admin1_boundaries <- st_read(adm1_shapefile_path)
+
+# Save as RDS
+# saveRDS(admin1_boundaries, file = "admin1_boundaries.rds")
+#########################################################################
+
 # Load ADM1 boundaries (light version)
 admin1_boundaries <- readRDS("admin1_boundaries.rds")
 
