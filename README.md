@@ -8,5 +8,7 @@ b. Map: Shows ADM1 level share of the specific population group. For example: Sh
 c. Data table: Data set of all the important information that was used for visualization and more. Contains year, ADM1 code, ADM1 english name, population count, and etc.
 
 1. Ukraine population analysis
-   Data source: Public information from State Statistics Service of Ukraine (Derzhstat). https://stat.gov.ua/en/explorer?urn=SSSU:DF_POPULATION_STRUCTURE(7.0.0)
+   Data source:
+      Population data: Public information from State Statistics Service of Ukraine (Derzhstat). Downloaded from https://stat.gov.ua/en/explorer?urn=SSSU:DF_POPULATION_STRUCTURE(7.0.0)
+      Shape data: Public shape data from OCHA. Downloaded from https://data.humdata.org/dataset/cod-ab-ukr
    
