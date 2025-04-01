@@ -50,7 +50,7 @@ SSSU_dataset <- read.csv(file_path)
 # Data Cleaning and Wrangling
 # -------------------------------
 # 3.1 Cleaning SSSU Population Data
-SSSU_dataset <- SSSSU_dataset %>%
+SSSU_dataset <- SSSU_dataset %>%
   pivot_longer(
     cols = starts_with("X"),
     names_to = "Year",
@@ -160,17 +160,19 @@ calculate_pct_Change <- function(data) {
 final_dataset <- calculate_pct_Change(dataset) %>%
   mutate(ADM1_EN = if_else(is.na(ADM1_EN), "Ukraine", ADM1_EN))
 
-# 5. Adding National Totals and Regional Percentages
-national_totals <- final_dataset %>%
-  filter(ADM1_PCODE == "UA") %>%
-  select(Year, Age_Category, Sex, National_Total = Population)
+# 5. Adding Oblast Totals and Regional Percentages
+Oblast_total <- final_dataset %>%
+  ungroup() %>%
+  filter(Age_Category == "total", Sex == "T") %>%
+  select(Year, ADM1_PCODE, Oblast_Total = Population)
 
 final_dataset <- final_dataset %>%
-  left_join(national_totals, by = c("Year", "Age_Category", "Sex")) %>%
+  ungroup() %>%
+  left_join(Oblast_total, by = c("Year", "ADM1_PCODE")) %>%
   mutate(
     pct = if_else(
-      !is.na(National_Total),
-      round((Population / National_Total) * 100, 2),
+      !is.na(Oblast_Total),
+      round((Population / Oblast_Total) * 100, 2),
       NA_real_
     )
   )
@@ -188,7 +190,7 @@ wra_oblast <- final_dataset %>%
   summarise(
     Population = sum(Population, na.rm = TRUE),
     pct_Change = sum(pct_Change, na.rm = TRUE),
-    pct = sum(pct_Change, na.rm = TRUE),
+    pct = sum(pct, na.rm = TRUE),
     .groups = "drop"
   )
 
@@ -285,7 +287,7 @@ ui <- dashboardPage(
               fluidRow(
                 box(width = 6, title = "Select Population Group for Map",
                     selectInput("mapPopGroup", "Population Group:",
-                                choices = sort(unique(ADM1_table$Age_Group)),
+                                choices = sort(unique(ADM1_table$Age_Group[ADM1_table$Age_Group != "Total Population"])),
                                 selected = "Elderly Population (60+)")
                 ),
                 box(width = 6, title = "Select Year for Map",
