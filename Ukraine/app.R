@@ -43,14 +43,14 @@ library(viridis)
 admin1_boundaries <- readRDS("admin1_boundaries.rds")
 
 # Load SSSU data
-file_path <- here("SSSU_pop_age_split.csv")
-SSSU_pop_age_split <- read.csv(file_path)
+file_path <- here("SSSU_dataset.csv")
+SSSU_dataset <- read.csv(file_path)
 
 # -------------------------------
 # Data Cleaning and Wrangling
 # -------------------------------
 # 3.1 Cleaning SSSU Population Data
-SSSU_pop_age_split <- SSSU_pop_age_split %>%
+SSSU_dataset <- SSSSU_dataset %>%
   pivot_longer(
     cols = starts_with("X"),
     names_to = "Year",
@@ -84,7 +84,7 @@ SSSU_pop_age_split <- SSSU_pop_age_split %>%
   filter(Year >= 2015)
 
 # Join geometry and ADM1 code from boundaries
-SSSU_pop_age_split <- SSSU_pop_age_split %>%
+SSSU_dataset <- SSSU_dataset %>%
   left_join(admin1_boundaries %>% select(ADM1_EN, ADM1_PCODE, geometry),
             by = "ADM1_EN") %>%
   mutate(
@@ -92,16 +92,16 @@ SSSU_pop_age_split <- SSSU_pop_age_split %>%
   )
 
 # Create a combined record for age "9-14 years old"
-SSSU_pop_age_9_14 <- SSSU_pop_age_split %>%
+SSSU_age_9_14 <- SSSU_dataset %>%
   filter(Age %in% c("9 years old", "10-14 years old")) %>%
   group_by(ADM1_EN, ADM1_PCODE, Year, Gender) %>%
   summarise(Total = sum(Total, na.rm = TRUE), .groups = "drop") %>%
   mutate(Age = "9-14 years old")
 
-SSSU_pop_age_split <- bind_rows(SSSU_pop_age_split, SSSU_pop_age_9_14)
+SSSU_dataset <- bind_rows(SSSU_dataset, SSSU_age_9_14)
 
 # Create Age_Category according to your rules and preserve geometry
-SSSU_clean <- SSSU_pop_age_split %>%
+SSSU_clean <- SSSU_dataset %>%
   mutate(
     Year = suppressWarnings(as.integer(Year)),
     Age_Category = case_when(
